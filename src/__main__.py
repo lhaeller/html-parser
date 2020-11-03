@@ -10,18 +10,18 @@ file_name = "2020-11-03.txt"
 file_date = file_name.strip(".txt")  # TODO: use for h2 timestamp
 
 
-# TODO: read each line and save to object
+# TODO: read each line and save to object or maybe file
 def go_through_lines(path):
     with open(path) as test_file:
         print("")
-        print("- - - - - - - - - - - - ")
-        print("U S I N G   readlines()-san")
+        print("O U T P U T  L I N E S")
+        print("_______________________")
         line_count = 0
         for line in test_file.readlines():
             line = line.strip()
             print(line_count, replace_tags(line))
             line_count += 1
-
+        print("_______________________")
 
 # TODO: define parse rules (.TXT to .HTML)
 def replace_tags(single_line):
