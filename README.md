@@ -11,3 +11,11 @@
 
 - ```<h2>YYYY-MM-DD</h2>``` is marked in the name of the file as in ```YYYY-MM-DD.txt```
 - ```<h3>hh:mm</h3>``` is marked as ```hh:mm DD/MM/YYYY``` (**F5** in Notepad)
+- ```<p>``` is marked by the begging of text
+- ```</p>``` is marked by a) EOF or b) any empty line like:
+
+> ```hey, another line!```
+>
+> ``` ```
+>
+> ```wow, this must be the next paragraph```
