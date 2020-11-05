@@ -17,5 +17,8 @@
 > ```hey, another line!```
 >
 > ``` ```
->
+> 
 > ```wow, this must be the next paragraph```
+
+- ```<p><b>{</b> Note:``` is marked as ```{NOTE_START```
+- ```<b>}</b></p>``` is marked as ```NOTE_END}```
