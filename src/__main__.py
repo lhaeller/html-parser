@@ -1,27 +1,60 @@
 import re
 from datetime import datetime
+from pathlib import Path
+import os
 
 # TODO: read TXT file
 # TODO: read all TXT files in folder "data_in"
 
+# TODO: add variables "input_path" and "output_path" instead
+path_to_test_file = "../data/data_in/2020-11-03.txt"  # to be replaced
+path_to_output_file = '../data/data_out/new.txt'  # to be replaced
+input_path = '../data/data_in/'
+output_path = '../data/data_out/'
 
-path_to_test_file = "../data/data_in/2020-11-03.txt"
 file_name = "2020-11-03.txt"
 file_date = file_name.strip(".txt")  # TODO: use for h2 timestamp
 
 
+def parse_all_files(input_path, output_path):
+    file_list = os.listdir(input_path)
+    for file in file_list:
+        path_to_input_file = input_path + file
+        html_lines = go_through_lines(path_to_input_file)
+
+        # to test if input is coming
+        print("html lines:")
+        for line in html_lines:
+            print(line)
+
+        file_name = os.path.basename(file)
+        print('file_name is:', file_name)
+        path_to_output_file = output_path + file_name + ".html"
+        Path(path_to_output_file).touch()  # create output file
+
+        # write to output file
+        with open(path_to_output_file, 'w') as file_handle:
+            file_handle.writelines("%s\n" % line for line in html_lines)
+            file_handle.close()
+
+
 # TODO: read each line and save to object or maybe file
 def go_through_lines(path):
-    with open(path) as test_file:
+    altered_lines = []
+    with open(path) as input_file:
         print("")
         print("O U T P U T  L I N E S")
         print("_______________________")
         line_count = 0
-        for line in test_file.readlines():
+        for line in input_file.readlines():
             line = line.strip()
             print(line_count, replace_tags(line))
             line_count += 1
+            altered_lines.append(line)
         print("_______________________")
+
+    return altered_lines
+
 
 # TODO: define parse rules (.TXT to .HTML)
 def replace_tags(single_line):
@@ -42,7 +75,7 @@ def replace_tags(single_line):
         return single_line
 
 
-go_through_lines(path_to_test_file)
+parse_all_files(input_path, output_path)
 
 # templates below this line
 
