@@ -3,12 +3,6 @@ from datetime import datetime
 from pathlib import Path
 import os
 
-# TODO: read TXT file
-# TODO: read all TXT files in folder "data_in"
-
-# TODO: add variables "input_path" and "output_path" instead
-path_to_test_file = "../data/data_in/2020-11-03.txt"  # to be replaced
-path_to_output_file = '../data/data_out/new.txt'  # to be replaced
 input_path = '../data/data_in/'
 output_path = '../data/data_out/'
 
@@ -41,15 +35,20 @@ def parse_all_files(input_path, output_path):
 # TODO: read each line and save to object or maybe file
 def go_through_lines(path):
     altered_lines = []
+    file_name = os.path.basename(path)
+    first_line = replace_tags(file_name.strip(".txt")) # file_name.strip(".txt")
+    altered_lines.append(first_line)
+
     with open(path) as input_file:
         print("")
         print("O U T P U T  L I N E S")
         print("_______________________")
-        line_count = 0
+        # line_count = 0
         for line in input_file.readlines():
             line = line.strip()
-            print(line_count, replace_tags(line))
-            line_count += 1
+            # print(line_count, replace_tags(line))
+            # line_count += 1
+            line = replace_tags(line)
             altered_lines.append(line)
         print("_______________________")
 
@@ -58,21 +57,32 @@ def go_through_lines(path):
 
 # TODO: define parse rules (.TXT to .HTML)
 def replace_tags(single_line):
+    # return string
+    formatted_string = single_line # default
+
     # regex declarations
-    time_and_date = re.compile('\d\d:\d\d \d\d\/\d\d\/\d\d\d\d')  # hh:mm dd/mm/yyyy
+    date_jp = re.compile('\d\d\d\d-\d\d-\d\d')
+    time_and_date_de = re.compile('\d\d:\d\d \d\d\/\d\d\/\d\d\d\d')  # hh:mm dd/mm/yyyy
+
 
     # executing checks
-    time_date_match = time_and_date.match(single_line)
-    if time_date_match != None:
+    time_date_de_match = time_and_date_de.match(single_line)
+    if time_date_de_match != None:
         # line = "10:22 03/11/2020"
         date_time_object = datetime.strptime(single_line, '%H:%M %d/%m/%Y')
         time_only = datetime.strftime(date_time_object, '%H:%M')
-
         # print("time_only=",time_only)
         formatted_string = "<h3>" + time_only + "</h3>"
-        return formatted_string
-    else:
-        return single_line
+
+    date_jp_match = date_jp.match(single_line)
+    if date_jp_match != None:
+        date = str(date_jp_match.group())
+        date_time_object = datetime.strptime(date, '%Y-%m-%d')
+        japanese_date = datetime.strftime(date_time_object, '%Y-%m-%d')
+        formatted_string = "<h2>" + japanese_date + "</h2>"
+
+    # output line
+    return formatted_string
 
 
 parse_all_files(input_path, output_path)
