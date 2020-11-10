@@ -1,0 +1,12 @@
+10:22 03/11/2020
+some text right here..
+hey, another line!
+
+wow. this must be the next paragraph.
+
+[[this-is-an-image.png]]
+above me is an image.
+
+10:23 03/11/2020
+hey. another time another entry, right?
+welp. [this is a link](www.escapemod.net)
