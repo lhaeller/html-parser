@@ -36,22 +36,29 @@ def parse_all_files(input_path, output_path):
 def go_through_lines(path):
     altered_lines = []
     file_name = os.path.basename(path)
-    first_line = replace_tags(file_name.strip(".txt")) # file_name.strip(".txt")
+    first_line = replace_basic_tags(file_name.strip(".txt"))  # file_name.strip(".txt")
     altered_lines.append(first_line)
 
     with open(path) as input_file:
+        # for testing
         print("")
         print("O U T P U T  L I N E S")
         print("_______________________")
         line_count = 0
+
+        # switch to handle empty lines
+        within_paragraph = False
+
         for line in input_file.readlines():
             if is_empty_line(line):
-                line = "</p>" # close paragraph
+                if within_paragraph:
+                    line = "</p>"  # close paragraph
+                    within_paragraph = False
                 print(line_count, line)
             else:
-                print(line_count, replace_tags(line))
+                print(line_count, replace_basic_tags(line))
                 line_count += 1
-                line = replace_tags(line)
+                line = replace_basic_tags(line)
             altered_lines.append(line)
         print("_______________________")
 
@@ -65,16 +72,16 @@ def is_empty_line(line):
     else:
         return False
 
+
 # TODO: define parse rules (.TXT to .HTML)
-def replace_tags(single_line):
+def replace_basic_tags(single_line):
     # return string
-    clean_single_line = single_line.strip() # delete leading and trailing spaces
-    formatted_string = clean_single_line # default
+    clean_single_line = single_line.strip()  # delete leading and trailing spaces
+    formatted_string = clean_single_line  # default
 
     # regex declarations
     date_jp = re.compile('\d\d\d\d-\d\d-\d\d')
     time_and_date_de = re.compile('\d\d:\d\d \d\d\/\d\d\/\d\d\d\d')  # hh:mm dd/mm/yyyy
-
 
     # executing checks
     time_date_de_match = time_and_date_de.match(clean_single_line)
