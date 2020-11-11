@@ -51,15 +51,33 @@ def go_through_lines(path):
 
         for line in input_file.readlines():
             if is_empty_line(line):
-                if within_paragraph:
+                if within_paragraph == True:
                     line = "</p>"  # close paragraph
                     within_paragraph = False
                 print(line_count, line)
+
             else:
                 print(line_count, replace_basic_tags(line))
                 line_count += 1
                 line = replace_basic_tags(line)
+
+            # print("line is:",line)
+            h2_regex = re.compile('<h2>')
+            h2_match = h2_regex.match(line)
+            # print('h2_match = ',h2_match)
+
+            h3_regex = re.compile('<h3>')
+            h3_match = h3_regex.match(line)
+            # print('h3_match =', h3_match)
+
+            if h2_match == None:
+                if h3_match == None:
+                    if within_paragraph == False:
+                        line = '<p>' + line
+                        within_paragraph = True
+
             altered_lines.append(line)
+
         print("_______________________")
 
     return altered_lines
