@@ -104,22 +104,3 @@ def replace_basic_tags(single_line):
 
 
 parse_all_files(input_path, output_path)
-
-# templates below this line
-
-''' regex template 1
-current_regex = re.compile('z00[a-zA-Z0-9][A-Za-z][A-Za-z][A-Za-z][A-Za-z]$')
-dfs = dfs.replace(regex=current_regex, value="unknown")
-'''
-
-''' regex template 2
-class Foo():
-    _rex = re.compile("\d+")
-    def bar(self, string):
-         m = _rex.match(string)
-         if m != None:
-             doStuff()
-'''
-''' time formatting
-datetimeObj = datetime.strftime(dt_obj, '%H:%M %d/%m/%Y')
-'''
