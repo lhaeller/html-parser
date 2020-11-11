@@ -43,22 +43,33 @@ def go_through_lines(path):
         print("")
         print("O U T P U T  L I N E S")
         print("_______________________")
-        # line_count = 0
+        line_count = 0
         for line in input_file.readlines():
-            line = line.strip()
-            # print(line_count, replace_tags(line))
-            # line_count += 1
-            line = replace_tags(line)
+            if is_empty_line(line):
+                line = "</p>" # close paragraph
+                print(line_count, line)
+            else:
+                print(line_count, replace_tags(line))
+                line_count += 1
+                line = replace_tags(line)
             altered_lines.append(line)
         print("_______________________")
 
     return altered_lines
 
 
+def is_empty_line(line):
+    # remove spaces and see if string is empty
+    if not line.strip():
+        return True
+    else:
+        return False
+
 # TODO: define parse rules (.TXT to .HTML)
 def replace_tags(single_line):
     # return string
-    formatted_string = single_line # default
+    clean_single_line = single_line.strip() # delete leading and trailing spaces
+    formatted_string = clean_single_line # default
 
     # regex declarations
     date_jp = re.compile('\d\d\d\d-\d\d-\d\d')
@@ -66,15 +77,15 @@ def replace_tags(single_line):
 
 
     # executing checks
-    time_date_de_match = time_and_date_de.match(single_line)
+    time_date_de_match = time_and_date_de.match(clean_single_line)
     if time_date_de_match != None:
         # line = "10:22 03/11/2020"
-        date_time_object = datetime.strptime(single_line, '%H:%M %d/%m/%Y')
+        date_time_object = datetime.strptime(clean_single_line, '%H:%M %d/%m/%Y')
         time_only = datetime.strftime(date_time_object, '%H:%M')
         # print("time_only=",time_only)
         formatted_string = "<h3>" + time_only + "</h3>"
 
-    date_jp_match = date_jp.match(single_line)
+    date_jp_match = date_jp.match(clean_single_line)
     if date_jp_match != None:
         date = str(date_jp_match.group())
         date_time_object = datetime.strptime(date, '%Y-%m-%d')
