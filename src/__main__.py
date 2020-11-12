@@ -122,6 +122,8 @@ def parse_basic_tags(single_line):
         japanese_date = datetime.strftime(date_time_object, '%Y-%m-%d')
         formatted_string = "<h2>" + japanese_date + "</h2>"
 
+    # TODO: make sure images are parsed before links are
+
     link_match = link.findall(clean_single_line)
     if link_match != None:
         print("found a link in:",clean_single_line)
