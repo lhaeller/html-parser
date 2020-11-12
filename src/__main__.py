@@ -36,7 +36,7 @@ def parse_all_files(input_path, output_path):
 def go_through_lines(path):
     altered_lines = []
     file_name = os.path.basename(path)
-    first_line = replace_basic_tags(file_name.strip(".txt"))  # file_name.strip(".txt")
+    first_line = parse_basic_tags(file_name.strip(".txt"))  # file_name.strip(".txt")
     altered_lines.append(first_line)
 
     with open(path) as input_file:
@@ -50,35 +50,41 @@ def go_through_lines(path):
         within_paragraph = False
 
         for line in input_file.readlines():
-            if is_empty_line(line):
-                if within_paragraph == True:
-                    line = "</p>"  # close paragraph
-                    within_paragraph = False
-                print(line_count, line)
 
-            else:
-                print(line_count, replace_basic_tags(line))
-                line_count += 1
-                line = replace_basic_tags(line)
+            # add basic tags
+            print(line_count, parse_basic_tags(line))
+            line_count += 1
+            line = parse_basic_tags(line)
 
+
+            # open paragraph
             # print("line is:",line)
             h2_regex = re.compile('<h2>')
             h2_match = h2_regex.match(line)
             # print('h2_match = ',h2_match)
-
             h3_regex = re.compile('<h3>')
             h3_match = h3_regex.match(line)
             # print('h3_match =', h3_match)
-
             if h2_match == None:
                 if h3_match == None:
                     if within_paragraph == False:
                         line = '<p>' + line
                         within_paragraph = True
 
+            # close paragraphs
+            if is_empty_line(line):
+                if within_paragraph == True:
+                    line = "</p>"  # close paragraph
+                    within_paragraph = False
+                print(line_count, line)
+
             altered_lines.append(line)
 
         print("_______________________")
+
+    if within_paragraph == True:
+        line = "</p>" # close final paragraph
+        altered_lines.append(line)
 
     return altered_lines
 
@@ -92,7 +98,7 @@ def is_empty_line(line):
 
 
 # TODO: define parse rules (.TXT to .HTML)
-def replace_basic_tags(single_line):
+def parse_basic_tags(single_line):
     # return string
     clean_single_line = single_line.strip()  # delete leading and trailing spaces
     formatted_string = clean_single_line  # default
