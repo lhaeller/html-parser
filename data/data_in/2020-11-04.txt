@@ -9,4 +9,7 @@ above me is an image.
 
 13:16 04/11/2020
 hey. another time another entry, right?
-welp. [this is a link](www.escapemod.net)
+welp. [this is a link](https://www.escapemod.net)
+
+
+and here is [another link](https://duckduckgo.com/)

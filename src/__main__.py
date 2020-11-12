@@ -104,8 +104,7 @@ def parse_basic_tags(single_line):
     # regex declarations
     date_jp = re.compile('\d\d\d\d-\d\d-\d\d')
     time_and_date_de = re.compile('\d\d:\d\d \d\d\/\d\d\/\d\d\d\d')  # hh:mm dd/mm/yyyy
-    link = re.compile('\[(.+)\]\(([^ ]+?)( "(.+)")?\)') # [TEXT](linked-path)
-    link_match = link.match("[this is a link](www.escapemod.net)")
+    link = re.compile('\[(.+)\]\(([^ ]+?)( "(.+)")?\)')  # [TEXT](linked-path)
 
     # executing checks
     time_date_de_match = time_and_date_de.match(clean_single_line)
@@ -123,31 +122,102 @@ def parse_basic_tags(single_line):
         japanese_date = datetime.strftime(date_time_object, '%Y-%m-%d')
         formatted_string = "<h2>" + japanese_date + "</h2>"
 
-    link_match = link.match(clean_single_line)
+    link_match = link.findall(clean_single_line)
     if link_match != None:
-        print("found a link:",clean_single_line)
+        print("found a link in:",clean_single_line)
+        formatted_string = build_html_for_link(clean_single_line)
 
     # output line
     return formatted_string
 
-''' currently commented out for testing
+def build_html_for_link(text):
+    # all regex for links
+    regex_link = re.compile('\[(.+)\]\(([^ ]+?)( "(.+)")?\)') # [TEXT](linked-path)
+    regex_linked_text = re.compile('\[(.+)\]')  # [TEXT]
+    regex_link_itself = re.compile('\(([^ ]+?)( "(.+)")?\)')  # (linked-path)
+    regex_final_text_for_link = re.compile('(.+)')  # TEXT
+    regex_final_link_itself = re.compile('([^ ]+?)( "(.+)")?')  # linked-path
+
+    # objective
+    html_text = ''
+
+
+    link_match = regex_link.match(text)
+    link_findall = regex_link.findall(text)
+    link_search = regex_link.search(text)
+
+    print("")
+
+    if link_findall != None:
+        print("find_all = ",link_findall)
+
+        # TODO: shorten after testing
+        # get text before first link
+        listed_links = text.split('[')
+        text_before_first_link = listed_links.pop(0)
+        print("text_before_first_link:", text_before_first_link)
+        html_text += text_before_first_link # save piece #1
+
+        for element in listed_links:
+            print("")
+
+            element = "[" + element
+            print("e=",element)
+
+            linked_text_match = regex_linked_text.match(element)
+
+            link_part_cut = element.split(']')
+            link_part_cut.pop(0)
+            c = 0
+            link_part = ''
+            for part in link_part_cut:
+                print(c,part)
+                c += 1
+                link_part += part
+
+            link_itself_match = regex_link_itself.match(link_part)
+
+            # TODO: save non-linked part
+            text_inbetween = ''
+            if link_itself_match != None:
+                extra_text = link_part.split(str(link_itself_match.group()))
+                extra_text.pop(0)
+                for text in extra_text:
+                    text_inbetween += text
+
+
+            # TODO: set linked text and link itself together
+            final_linked_text = ''
+            final_link_itself = ''
+
+
+            if linked_text_match != None:
+                # print("linked_text_match = ", linked_text_match.group())
+                final_linked_text = str(linked_text_match.group())
+                final_linked_text = final_linked_text[1:-1]
+                print("final_linked_text =",final_linked_text)
+
+
+            if link_itself_match != None:
+                # print("link_itself_match =", link_itself_match.group())
+                final_link_itself = str(link_itself_match.group())
+                final_link_itself = final_link_itself[1:-1]
+                print("final_link_itself = ",final_link_itself)
+
+            link_html = "<a href='"+final_link_itself+"' target='_blank'>"+final_linked_text+"</a>"
+            html_text += link_html
+
+            # adding the rest of the text
+            html_text += text_inbetween
+
+    print("html_text:")
+    print(html_text)
+
+    return html_text
+
+# main.py
 parse_all_files(input_path, output_path)
-'''
 
-temp_text = "welp. [this is a link](www.escapemod.net). and there's more:  [this is another link](www.google.com)"
-link = re.compile('\[(.+)\]\(([^ ]+?)( "(.+)")?\)') # [TEXT](linked-path)
-link_match = link.match(temp_text)
-link_findall = link.findall(temp_text)
-link_search = link.search(temp_text)
-
-print("")
-
-if link_match != None:
-    print("link_match = ",link_match)
-
-if link_findall != None:
-    print("find_all = ",link_findall)
-
-    listed_links = temp_text.split('[')
-    for element in listed_links:
-        print("e=",element)
+# for testing
+# temp_text = "welp. [this is a link](www.escapemod.net). and there's more:  [this is another link](www.google.com)"
+# build_html_for_link(temp_text)
