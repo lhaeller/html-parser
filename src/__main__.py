@@ -104,6 +104,8 @@ def parse_basic_tags(single_line):
     # regex declarations
     date_jp = re.compile('\d\d\d\d-\d\d-\d\d')
     time_and_date_de = re.compile('\d\d:\d\d \d\d\/\d\d\/\d\d\d\d')  # hh:mm dd/mm/yyyy
+    link = re.compile('\[(.+)\]\(([^ ]+?)( "(.+)")?\)') # [TEXT](linked-path)
+    link_match = link.match("[this is a link](www.escapemod.net)")
 
     # executing checks
     time_date_de_match = time_and_date_de.match(clean_single_line)
@@ -121,8 +123,31 @@ def parse_basic_tags(single_line):
         japanese_date = datetime.strftime(date_time_object, '%Y-%m-%d')
         formatted_string = "<h2>" + japanese_date + "</h2>"
 
+    link_match = link.match(clean_single_line)
+    if link_match != None:
+        print("found a link:",clean_single_line)
+
     # output line
     return formatted_string
 
-
+''' currently commented out for testing
 parse_all_files(input_path, output_path)
+'''
+
+temp_text = "welp. [this is a link](www.escapemod.net). and there's more:  [this is another link](www.google.com)"
+link = re.compile('\[(.+)\]\(([^ ]+?)( "(.+)")?\)') # [TEXT](linked-path)
+link_match = link.match(temp_text)
+link_findall = link.findall(temp_text)
+link_search = link.search(temp_text)
+
+print("")
+
+if link_match != None:
+    print("link_match = ",link_match)
+
+if link_findall != None:
+    print("find_all = ",link_findall)
+
+    listed_links = temp_text.split('[')
+    for element in listed_links:
+        print("e=",element)
