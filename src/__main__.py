@@ -57,23 +57,21 @@ def go_through_lines(path):
             line = parse_basic_tags(line)
 
 
-            # open paragraph
-            # print("line is:",line)
+            # start paragraph
             h2_regex = re.compile('<h2>')
             h2_match = h2_regex.match(line)
-            # print('h2_match = ',h2_match)
+
             h3_regex = re.compile('<h3>')
             h3_match = h3_regex.match(line)
-            # print('h3_match =', h3_match)
-            if h2_match == None:
-                if h3_match == None:
-                    if within_paragraph == False:
-                        line = '<p>' + line
-                        within_paragraph = True
 
-            # close paragraphs
+            if h2_match == None and h3_match == None:
+                if within_paragraph == False:
+                    line = '<p>' + line
+                    within_paragraph = True
+
+            # close paragraph
             if is_empty_line(line):
-                if within_paragraph == True:
+                if within_paragraph:
                     line = "</p>"  # close paragraph
                     within_paragraph = False
                 print(line_count, line)
@@ -82,7 +80,7 @@ def go_through_lines(path):
 
         print("_______________________")
 
-    if within_paragraph == True:
+    if within_paragraph:
         line = "</p>" # close final paragraph
         altered_lines.append(line)
 
