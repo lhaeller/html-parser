@@ -2,6 +2,7 @@ import re
 from datetime import datetime
 from pathlib import Path
 import os
+import shutil, os
 
 input_path = '../data/data_in/'
 output_path = '../data/data_out/'
@@ -150,7 +151,10 @@ def build_html_for_images(text):
         print("path_to_image = ",path_to_image)
         html_text += "<img src='" + path_to_image + "' style='max-width=40%' />"
 
-    # TODO: make sure image gets copied to data_out
+        # TODO: make sure image gets copied to data_out
+        # copy image file to output path
+        file = input_path + path_to_image
+        shutil.copy(file, output_path)
 
     return html_text
 
