@@ -15,14 +15,15 @@ def parse_all_files(input_path, output_path):
     file_list = os.listdir(input_path)
     for file in file_list:
         path_to_input_file = input_path + file
-        html_lines = go_through_lines(path_to_input_file)
 
-        # to test if input is coming
-        print("html lines:")
-        for line in html_lines:
-            print(line)
+        # read file while skipping non-text files
+        file_name = os.path.basename(file)
+        if is_textfile(file_name):
+            html_lines = go_through_lines(path_to_input_file)
+        else:
+            continue
 
-        # TODO: catch error that non-text files are copied too
+        # TODO: catch error that file extensions still added
         file_name = os.path.basename(file)
         print('file_name is:', file_name)
         path_to_output_file = output_path + file_name + ".html"
@@ -33,6 +34,18 @@ def parse_all_files(input_path, output_path):
             file_handle.writelines("%s\n" % line for line in html_lines)
             file_handle.close()
 
+def is_textfile(filename):
+    # check if .txt file
+    print("filename =",filename)
+    textfile_ending = filename[-4:]
+    regex_textfile = re.compile('\.txt')
+    match_textfile = regex_textfile.match(textfile_ending)
+    print("textfile_ending =",textfile_ending)
+    print("match_textfile = ",match_textfile)
+    if match_textfile != None:
+        return True
+    else:
+        return False
 
 # TODO: read each line and save to object or maybe file
 def go_through_lines(path):
@@ -82,7 +95,7 @@ def go_through_lines(path):
                 altered_lines.append(line)
 
             print("_______________________")
-            
+
     except UnicodeDecodeError:
         print("UnicodeDecodeError for Windows Systems")
 
