@@ -100,7 +100,6 @@ def parse_basic_tags(single_line):
     # return string
     clean_single_line = single_line.strip()  # delete leading and trailing spaces
     formatted_string = clean_single_line  # default
-    # TODO: make sure formatted_string doesn't get overwritten when checking both img and links
 
     # regex declarations
     date_jp = re.compile('\d\d\d\d-\d\d-\d\d')
@@ -124,15 +123,14 @@ def parse_basic_tags(single_line):
         japanese_date = datetime.strftime(date_time_object, '%Y-%m-%d')
         formatted_string = "<h2>" + japanese_date + "</h2>"
 
-    # TODO: make sure images are parsed before links are
+    # images are parsed before links because of similar patterns
     image_match = image.match(clean_single_line)
     if image_match != None:
         formatted_string = build_html_for_images(clean_single_line)
 
-    # link_match = link.findall(clean_single_line)
-    # if link_match != None:
-    #    print("found a link in:",clean_single_line)
-    #   formatted_string = build_html_for_link(clean_single_line)
+    link_match = link.findall(formatted_string)
+    if link_match != None:
+        formatted_string = build_html_for_link(formatted_string)
 
     # output line
     return formatted_string
