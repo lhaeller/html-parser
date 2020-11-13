@@ -4,7 +4,7 @@ hey, another line!
 
 wow. this must be the next paragraph.
 
-[[this-is-an-image.png]]
+[[test-image.png]]
 above me is an image.
 
 13:16 04/11/2020

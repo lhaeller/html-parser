@@ -100,10 +100,12 @@ def parse_basic_tags(single_line):
     # return string
     clean_single_line = single_line.strip()  # delete leading and trailing spaces
     formatted_string = clean_single_line  # default
+    # TODO: make sure formatted_string doesn't get overwritten when checking both img and links
 
     # regex declarations
     date_jp = re.compile('\d\d\d\d-\d\d-\d\d')
     time_and_date_de = re.compile('\d\d:\d\d \d\d\/\d\d\/\d\d\d\d')  # hh:mm dd/mm/yyyy
+    image = re.compile('\[\[(.+)\]\]')  # [path-to-image]
     link = re.compile('\[(.+)\]\(([^ ]+?)( "(.+)")?\)')  # [TEXT](linked-path)
 
     # executing checks
@@ -123,14 +125,37 @@ def parse_basic_tags(single_line):
         formatted_string = "<h2>" + japanese_date + "</h2>"
 
     # TODO: make sure images are parsed before links are
+    image_match = image.match(clean_single_line)
+    if image_match != None:
+        formatted_string = build_html_for_images(clean_single_line)
 
-    link_match = link.findall(clean_single_line)
-    if link_match != None:
-        print("found a link in:",clean_single_line)
-        formatted_string = build_html_for_link(clean_single_line)
+    # link_match = link.findall(clean_single_line)
+    # if link_match != None:
+    #    print("found a link in:",clean_single_line)
+    #   formatted_string = build_html_for_link(clean_single_line)
 
     # output line
     return formatted_string
+
+def build_html_for_images(text):
+    # regex declaration
+    regex_image = re.compile('\[\[(.+)\]\]')  # [path-to-image]
+
+    # objective
+    html_text = ''
+
+    image_match = regex_image.match(text)
+    if image_match != None:
+        print("image_match =", image_match.group())
+        path_to_image = str(image_match.group())
+        path_to_image = path_to_image[2:-2]
+        print("path_to_image = ",path_to_image)
+        html_text += "<img src='" + path_to_image + "' style='max-width=40%' />"
+
+    # TODO: make sure image gets copied to data_out
+
+    return html_text
+
 
 def build_html_for_link(text):
     # all regex for links
@@ -150,6 +175,7 @@ def build_html_for_link(text):
 
     print("")
 
+    # since there can be several links in a line
     if link_findall != None:
         print("find_all = ",link_findall)
 
