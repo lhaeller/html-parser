@@ -22,6 +22,7 @@ def parse_all_files(input_path, output_path):
         for line in html_lines:
             print(line)
 
+        # TODO: catch error that non-text files are copied too
         file_name = os.path.basename(file)
         print('file_name is:', file_name)
         path_to_output_file = output_path + file_name + ".html"
@@ -40,46 +41,50 @@ def go_through_lines(path):
     first_line = parse_basic_tags(file_name.strip(".txt"))  # file_name.strip(".txt")
     altered_lines.append(first_line)
 
-    with open(path) as input_file:
-        # for testing
-        print("")
-        print("O U T P U T  L I N E S")
-        print("_______________________")
-        line_count = 0
+    try:
+        with open(path) as input_file:
+            # for testing
+            print("")
+            print("O U T P U T  L I N E S")
+            print("_______________________")
+            line_count = 0
 
-        # switch to handle empty lines
-        within_paragraph = False
+            # switch to handle empty lines
+            within_paragraph = False
 
-        for line in input_file.readlines():
+            for line in input_file.readlines():
 
-            # add basic tags
-            print(line_count, parse_basic_tags(line))
-            line_count += 1
-            line = parse_basic_tags(line)
+                # add basic tags
+                print(line_count, parse_basic_tags(line))
+                line_count += 1
+                line = parse_basic_tags(line)
 
 
-            # start paragraph
-            h2_regex = re.compile('<h2>')
-            h2_match = h2_regex.match(line)
+                # start paragraph
+                h2_regex = re.compile('<h2>')
+                h2_match = h2_regex.match(line)
 
-            h3_regex = re.compile('<h3>')
-            h3_match = h3_regex.match(line)
+                h3_regex = re.compile('<h3>')
+                h3_match = h3_regex.match(line)
 
-            if h2_match == None and h3_match == None:
-                if within_paragraph == False:
-                    line = '<p>' + line
-                    within_paragraph = True
+                if h2_match == None and h3_match == None:
+                    if within_paragraph == False:
+                        line = '<p>' + line
+                        within_paragraph = True
 
-            # close paragraph
-            if is_empty_line(line):
-                if within_paragraph:
-                    line = "</p>"  # close paragraph
-                    within_paragraph = False
-                print(line_count, line)
+                # close paragraph
+                if is_empty_line(line):
+                    if within_paragraph:
+                        line = "</p>"  # close paragraph
+                        within_paragraph = False
+                    print(line_count, line)
 
-            altered_lines.append(line)
+                altered_lines.append(line)
 
-        print("_______________________")
+            print("_______________________")
+            
+    except UnicodeDecodeError:
+        print("UnicodeDecodeError for Windows Systems")
 
     if within_paragraph:
         line = "</p>" # close final paragraph
