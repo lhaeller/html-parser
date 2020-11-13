@@ -23,10 +23,10 @@ def parse_all_files(input_path, output_path):
         else:
             continue
 
-        # TODO: catch error that file extensions still added
+        # create html file
         file_name = os.path.basename(file)
         print('file_name is:', file_name)
-        path_to_output_file = output_path + file_name + ".html"
+        path_to_output_file = output_path + file_name[:-4] + ".html"
         Path(path_to_output_file).touch()  # create output file
 
         # write to output file
