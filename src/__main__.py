@@ -29,6 +29,7 @@ def parse_all_files(input_path, output_path):
         path_to_output_file = output_path + file_name[:-4] + ".html"
         Path(path_to_output_file).touch()  # create output file
 
+
         # write to output file
         with open(path_to_output_file, 'w') as file_handle:
             file_handle.writelines("%s\n" % line for line in html_lines)
@@ -164,6 +165,14 @@ def build_html_for_images(text):
     image_match = regex_image.match(text)
     if image_match != None:
         print("image_match =", image_match.group())
+
+        # create 'data' directory for images
+        try:
+            data_path = output_path + 'data'
+            os.mkdir(data_path, 0o0775)
+        except(FileExistsError):
+            print("Directory 'data' exists already. Skipping directory creation.")
+
         path_to_image = str(image_match.group())
         path_to_image = path_to_image[2:-2]
         local_path_to_image = 'data/' + path_to_image # TODO: exclude 'https' img links
@@ -173,7 +182,7 @@ def build_html_for_images(text):
         # TODO: make sure image gets copied to data_out
         # copy image file to output path
         file = input_path + path_to_image
-        shutil.copy(file, output_path + 'data/')
+        shutil.copy(file, output_path + 'data')
 
     return html_text
 
