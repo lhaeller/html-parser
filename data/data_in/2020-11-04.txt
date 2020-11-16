@@ -7,6 +7,8 @@ wow. this must be the next paragraph.
 [[test-image.png]]
 above me is an image.
 
+Normal text right here. **wow. such a bold text!!**. Welp, *this right here* is even better.
+
 13:16 04/11/2020
 hey. another time another entry, right?
 welp. [this is a link](https://www.escapemod.net)

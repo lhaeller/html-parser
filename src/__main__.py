@@ -126,6 +126,8 @@ def parse_basic_tags(single_line):
     time_and_date_de = re.compile('\d\d:\d\d \d\d\/\d\d\/\d\d\d\d')  # hh:mm dd/mm/yyyy
     image = re.compile('\[\[(.+)\]\]')  # [path-to-image]
     link = re.compile('\[(.+)\]\(([^ ]+?)( "(.+)")?\)')  # [TEXT](linked-path)
+    bold_text = re.compile('(.+)\*\*(.+)\*\*(.+)') # **TEXT**
+    italics_text = re.compile('\*(.+)\*') # *TEXT*
 
     # executing checks
     time_date_de_match = time_and_date_de.match(clean_single_line)
@@ -152,8 +154,77 @@ def parse_basic_tags(single_line):
     if link_match != None:
         formatted_string = build_html_for_link(formatted_string)
 
+    bold_match = bold_text.match(formatted_string)
+    if bold_match != None:
+        formatted_string = build_html_for_special_formats(formatted_string)
+
+    italics_match = italics_text.match(formatted_string)
+    if italics_match != None:
+        formatted_string = build_html_for_special_formats(formatted_string)
+
     # output line
     return formatted_string
+
+def build_html_for_special_formats(text):
+    # regex declarations
+    regex_bold = re.compile('(.+)\*\*(.+)\*\*(.+)') # **TEXT**
+    regex_italics = re.compile('(.+)\*(.+)\*(.+)')  # *TEXT*
+
+    # control switch
+    found_bold = False
+    active_text = text
+
+    # objective
+    html_text = ''
+
+    bold_match = regex_bold.match(active_text)
+    if bold_match != None:
+        # control status update
+        found_bold = True
+
+        # splitting text in its parts
+        active_text = active_text.split('**')
+
+        # everything before the **
+        text_before_bold = active_text[0]
+
+        # bold text itself
+        active_text.pop(0)
+        bold_text = active_text[0]
+
+        # everything after the **
+        active_text.pop(0)
+        text_after_bold = active_text[0]
+
+        print("bold matching completed")
+
+        html_text = text_before_bold + "<b>" + bold_text + "</b>" + text_after_bold
+
+    if found_bold:
+        active_text = html_text
+
+    italics_match = regex_italics.match(active_text)
+    if italics_match != None:
+        # splitting text in its parts
+        active_text = active_text.split('*')
+
+        # everything before the *
+        text_before_italics = active_text[0]
+
+        # bold text itself
+        active_text.pop(0)
+        italics_text = active_text[0]
+
+        # everything after the *
+        active_text.pop(0)
+        text_after_italics = active_text[0]
+
+        print("italics matching completed")
+
+        html_text = text_before_italics + "<i>" + italics_text + "</i>" + text_after_italics
+
+    return html_text
+
 
 def build_html_for_images(text):
     # regex declaration
