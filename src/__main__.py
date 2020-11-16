@@ -166,13 +166,14 @@ def build_html_for_images(text):
         print("image_match =", image_match.group())
         path_to_image = str(image_match.group())
         path_to_image = path_to_image[2:-2]
-        print("path_to_image = ",path_to_image)
-        html_text += "<img src='" + path_to_image + "' style='max-width=40%' />"
+        local_path_to_image = 'data/' + path_to_image # TODO: exclude 'https' img links
+        print("path_to_image = ",local_path_to_image)
+        html_text += "<img src='" + local_path_to_image + "' style='max-width=40%' />"
 
         # TODO: make sure image gets copied to data_out
         # copy image file to output path
         file = input_path + path_to_image
-        shutil.copy(file, output_path)
+        shutil.copy(file, output_path + 'data/')
 
     return html_text
 
