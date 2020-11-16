@@ -114,8 +114,8 @@ def is_empty_line(line):
     else:
         return False
 
-
-# TODO: define parse rules (.TXT to .HTML)
+# TODO: merge double code and possibly integrate checks right here or export them
+# TODO: catch double-occurences of embedded special formats within a line
 def parse_basic_tags(single_line):
     # return string
     clean_single_line = single_line.strip()  # delete leading and trailing spaces
