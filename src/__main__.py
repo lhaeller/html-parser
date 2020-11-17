@@ -248,7 +248,7 @@ def build_html_for_images(text):
         path_to_image = path_to_image[2:-2]
         local_path_to_image = 'data/' + path_to_image # TODO: exclude 'https' img links
         print("path_to_image = ",local_path_to_image)
-        html_text += "<img src='" + local_path_to_image + "' style='max-width=40%' />"
+        html_text += "<img src='" + local_path_to_image + "' style='max-width:40%' />"
 
         # TODO: make sure image gets copied to data_out
         # copy image file to output path
