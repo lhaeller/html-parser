@@ -57,16 +57,134 @@ def go_through_lines(path):
 
     try:
         with open(path) as input_file:
-            # for testing
-            print("")
-            print("O U T P U T  L I N E S")
-            print("_______________________")
-            line_count = 0
 
-            # switch to handle empty lines
+            # regex declarations
+            regex_date_jp = re.compile('\d\d\d\d-\d\d-\d\d')
+            regex_time_and_date_de = re.compile('\d\d:\d\d \d\d\/\d\d\/\d\d\d\d')  # hh:mm dd/mm/yyyy
+            regex_image = re.compile('\[\[(.+)\]\]')  # [path-to-image]
+
+            regex_link = re.compile('\[(.+)|(.+)\]\(([^ ]+?)( "(.+)")?\)')  # [TEXT](linked-path)
+            regex_bold_text = re.compile('\*\*')  # **TEXT**
+            regex_italics_text = re.compile('\*')  # *TEXT*
+
+            # after-checks for paragraph tags
+            regex_h2 = re.compile('<h2>(.+)</h2>')
+            regex_h3 = re.compile('<h3>(.+)</h3>')
+
+            '''
+            simple_regex = [
+            {'opening_tag':'<b>','closing_tag':'</b>','pattern':re.compile('(.+)\*\*(.+)\*\*(.+)')},
+            {'opening_tag': '<i>', 'closing_tag': '</i>', 'pattern': re.compile('\*(.+)\*')},
+            {'opening_tag': '<h2>', 'closing_tag': '</h3>', 'pattern': re.compile('<h2>(.+)</h2>')},
+            {'opening_tag': '<i>', 'closing_tag': '</i>', 'pattern': re.compile('<h3>(.+)</h3>')}
+            ]
+
+            special_regex = [
+            {'opening_html':"<img src='",'link_start_signs':'[[','link_close_sign':']]','closing_html':"' style='max-width:40%' />"},
+            ]
+            html_text += "<img src='" + local_path_to_image + "' style='max-width:40%' />"
+            '''
+
+            # switches to handle multiple lines
             within_paragraph = False
+            within_bold_format = False
+            within_italics_format = False
 
             for line in input_file.readlines():
+
+                line = line.strip()  # delete leading and trailing spaces
+
+                # for each regex pattern : check text for pattern
+
+                # single line formats
+                date_jp_match = regex_date_jp.match(line)
+                if date_jp_match != None:
+                    date = str(date_jp_match.group())
+                    date_time_object = datetime.strptime(date, '%Y-%m-%d')
+                    japanese_date = datetime.strftime(date_time_object, '%Y-%m-%d')
+                    line = "<h2>" + japanese_date + "</h2>"
+                    # no need to check line further:
+                    continue
+
+                time_date_de_match = regex_time_and_date_de.match(line)
+                if time_date_de_match != None:
+                    date_time_object = datetime.strptime(line, '%H:%M %d/%m/%Y')
+                    time_only = datetime.strftime(date_time_object, '%H:%M')
+                    line = "<h3>" + time_only + "</h3>"
+                    # no need to check line further:
+                    continue
+
+                image_match = regex_image.findall(line)
+                if image_match != None:
+                    # create 'data' directory for images
+                    try:
+                        data_path = output_path + 'data'
+                        os.mkdir(data_path, 0o0775)
+                    except(FileExistsError):
+                        print("Directory 'data' exists already. Skipping directory creation.")
+
+                    path_to_image = str(image_match.group())
+                    path_to_image = path_to_image[2:-2]
+                    local_path_to_image = 'data/' + path_to_image  # TODO: exclude 'https' img links
+                    line = "<img src='" + local_path_to_image + "' style='max-width:40%' />"
+
+                    # copy image file to output path
+                    file = input_path + path_to_image
+                    shutil.copy(file, output_path + 'data')
+
+                    # no need to check line further:
+                    continue
+
+
+                link_match = regex_link.findall(line)
+                # TODO: make into While loop
+                if link_match != None:
+                    
+                    # pattern is [TEXT](linked-path)
+
+                    regex_linked_text = re.compile('\[(.+)\]')  # [TEXT]
+                    regex_link_itself = re.compile('\(([^ ]+?)( "(.+)")?\)')  # (linked-path)
+
+                    # save the text before a '[' sign
+                    text_with_link = line.split('[')
+                    text_before_first_link = text_with_link.pop(0)
+                    html_line = text_before_first_link
+
+                    # get the linked text
+                    rest_of_text = ''
+                    for cut_part in text_with_link:
+                        rest_of_text += cut_part
+
+                    linked_text_match = regex_linked_text.match(rest_of_text)
+                    linked_text = str(linked_text_match.group())
+
+                    link_itself_match = regex_link_itself.match(rest_of_text)
+                    link_itself = str(link_itself_match.group())
+
+                    # TODO: put together html linked_text and link_itself
+                    html_line += ''
+
+                    # cut out the text that's already been processed
+                    rest_of_text = ''
+                    temp_rest_of_text = line.split(text_before_first_link)
+                    for part in temp_rest_of_text: rest_of_text += part
+                    temp_rest_of_text = line.split(link_match)
+                    for part in rest_of_text: rest_of_text += part
+                    line = rest_of_text
+
+
+                # multi-line formats
+
+
+                #   While: pattern matches
+                #       switch handle: False -> True, True -> False
+                #       split line in parts (before and after pattern-match)
+                #       change markdown to html
+                #   repeat with remaining text until False
+
+
+                # save formatted line
+                altered_lines.append(line)
 
                 # add basic tags
                 print(line_count, parse_basic_tags(line))
